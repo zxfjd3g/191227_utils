@@ -63,5 +63,37 @@
     const p2 = newInstance(Person, 'jack')
     console.log('p2', p2)
   </script>
+
+  <script>
+    /* 
+    自定义instanceof工具函数
+    如何判断: A instance B  B的原型对象是否是A原型链上的某个原型对象
+    */
+   console.log(p instanceof Person) // true
+   console.log(p instanceof Object) // true
+   console.log(Person instanceof Object)  // true
+   console.log(Object instanceof Person)  // false
+    // Function.prototype  ===> Object.prototype
+   function myInstanceOf(obj, Type) {
+     // 得到obj的原型对象
+     let protoObject = obj.__proto__
+     // 只要原型对象存在, 就需要再次进行判断
+     while(protoObject) {
+      // 判断出了Type的原型对象就是obj原型链上的某个原型对象, 直接返回true
+      if (protoObject===Type.prototype) {
+        return true
+      }
+      // 继续取出原型对象的原型对象
+      protoObject = protoObject.__proto__
+     }
+     // 整体原型链上的对象都不满足, 没有一个匹配的, 返回false
+     return false
+   }
+   console.log(myInstanceOf(p, Person))
+   console.log(myInstanceOf(p, Object))
+   console.log(myInstanceOf(Person, Object))
+   console.log(myInstanceOf(Object, Person))
+
+  </script>
 </body>
 </html>
