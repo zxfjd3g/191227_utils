@@ -21,7 +21,70 @@
         方法3: 利用ES6语法: from + Set 或者 ... + Set
                说明: 编码简洁
   -->
-  <script src="../dist/atguigu-utils.js"></script>
+  <script src="./node_modules/atguigu-utils/dist/atguigu-utils.js"></script>
+  <script>
+    const aUtils = {
+      /* 
+      方法1: 利用forEach()和indexOf()
+            说明: 本质是双重遍历, 效率差些
+      */
+      unique1 (arr) {
+        const array = []
+        // 遍历原数组每个元素, 如果这个元素在新数组中不存在, 就保存进去
+        arr.forEach(item => {
+          // if (array.indexOf(item)===-1) { // 在新数组中不存在
+          if (!array.includes(item)) { // 在新数组中不存在
+            array.push(item)
+          }
+        });
+
+        return array
+      },
+
+      /* 
+      方法2: 利用forEach() + 对象容器
+          说明: 只需一重遍历, 效率高些
+      */
+      unique2 (arr) {
+        const array = []
+        const container = {} // 用辅助我们判断元素是否已经存在的对象容器
+        // 遍历原数组每个元素, 如果这个元素在新数组中不存在, 就保存进去
+        arr.forEach(item => {
+          // if (array.indexOf(item)===-1) { // 在新数组中不存在
+          // if (!container[item]) {
+          if (!container.hasOwnProperty(item)) {
+            container[item] = true
+
+            array.push(item)
+          }
+        })
+
+        return array
+      },
+
+      /* 
+      方法3: 利用ES6语法: from + Set 或者 ... + Set
+          说明: 编码简洁
+      */
+      unique3 (arr) {
+        // return Array.from(new Set(arr))
+        return [...new Set(arr)]
+      },
+    }
+
+    /* 
+    需要一个容器来保存多个人(id/name/age), 需要根据id值来查找对应的人对象?
+    [{id: 1, name: 'A'}, {id: 3, name: 'B'}, {id: 5, name: 'C'}]
+
+    {
+     '1' : {id: 1, name: 'A'},
+     2 : {id: 3, name: 'B'},
+     3 : {id: 5, name: 'C'}
+    }
+
+    */
+   
+  </script>
   <script>
     console.log(aUtils.unique1([2, 3, 2, 7, 6, 7]))
     console.log(aUtils.unique2([2, 3, 2, 7, 6, 7]))
