@@ -18,30 +18,50 @@
         实现: Type的原型对象是否是obj的原型链上的某个对象, 如果是返回tru, 否则返回false
     */
   </script>
-  <script src="../dist/atguigu-utils.js"></script>
   <script>
-    function Person(name, age) {
+    function Person(name) {
+      // console.log('----', this.__proto__.constructor)  // 应该是Person
       this.name = name
-      this.age = age
-      return {}
-      // return []
-      // return function (){}
-      // return 1
+
+      // 下面3种情况都返回新创建的对象
       // return undefined
-    }
+      // return null
+      // return 3
 
-    const p = new Person('tom', 12)
-    console.log(p)
+      // 下面这3种结果都是return的数据
+      // return []  // new的结果就是它
+      // return {}  // new的结果就是它
+      // return function () {} // new的结果就是它
+    }  // 如果函数return了一个任意类型对象, new的结果就是它, 否则就是新创建的对象
 
-    const p2 = aUtils.newInstance(Person, 'Jack', 13)
-    console.log(p2, p2.constructor)
-
+    const p = new Person('tom')  // 原型对象的constructor属性指向构造函数
+    console.log('p', p)
   </script>
   <script>
-    console.log(aUtils.myInstanceOf(p, Object))
-    console.log(aUtils.myInstanceOf(p, Person))
-    console.log(aUtils.myInstanceOf(aUtils.myInstanceOf, Function))
-    console.log(aUtils.myInstanceOf(p, String), aUtils.myInstanceOf(p, Function))
+    /* 
+    实现一个与new功能相同的函数
+    */
+    function newInstance(Fn, ...args) {
+      // 创建一个新对象
+      const obj = {}  // obj的原型对象的constructor默认是Object
+
+      // 修正原型对象的constructor属性, 让它指向当前构造函数
+      obj.__proto__.constructor = Fn
+
+      // 通过新对象去调用构造函数(作为对象的方法去调用)
+      const result = Fn.call(obj, ...args)
+     
+      // 如果执行的结果是对象类型, 那最终返回的就它
+      if (result instanceof Object) {
+        return result
+      }
+
+      // 返回新对象 
+      return obj
+    }
+
+    const p2 = newInstance(Person, 'jack')
+    console.log('p2', p2)
   </script>
 </body>
 </html>
