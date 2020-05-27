@@ -35,7 +35,103 @@
         } else {
           return target
         }
-      }
+      },
+
+      /* 
+      2). 面试基础版本
+          解决问题1: 函数属性还没丢失
+          问题2: 循环引用会出错  没有解决: 它会同个对象或数据进行不断拷贝
+      */
+      deepClone2 (target) {
+        if (target!==null && typeof target==='object') { // 非函数的对象
+          // 创建一个新的空容器
+          const clone = Array.isArray(target) ? [] : {}
+
+          // 遍历target中所有数据, 依次添加到新容器
+          for (const key in target) {  // key是对象的属性名或数组的下标
+            if (target.hasOwnProperty(key)) { // 如果是容器自身的才需要处理
+              clone[key] = aUtils.deepClone2(target[key]) // 对属性值进行克隆处理后保存
+            }
+          }
+          return clone
+        } else {
+          return target
+        }
+      },
+
+      /* 
+      3). 面试加强版本
+        解决问题2: 循环引用正常
+
+        缓存的容器
+          问题1: 什么结构的?  Map, key为target, value是对应的拷贝对象
+          问题2: 保存什么数据  key是target, value是target对应的拷贝对象
+        注意: 在整个递归调用过程中, 只有一个map在反复使用
+      */
+      
+      deepClone3 (target, map=new Map()) {
+        
+        if (target!==null && typeof target==='object') { // 非函数的对象
+         // const map = new Map()  // 用来缓存target与其对应的拷贝对象的容器   // 不能在这里
+          // 从缓存中取出对应的拷贝对象,如果有了, 直接返回它
+          let clone = map.get(target)
+          if (clone) return clone
+
+          // 如果没有, 创建一个新拷贝空容器, 缓存起来
+          clone = Array.isArray(target) ? [] : {}
+          map.set(target, clone)
+
+          // 遍历target中所有数据, 依次添加到新容器
+          for (const key in target) {  // key是对象的属性名或数组的下标
+            if (target.hasOwnProperty(key)) { // 如果是容器自身的才需要处理
+              clone[key] = aUtils.deepClone3(target[key], map) // 对属性值进行克隆处理后保存
+            }
+          }
+          return clone
+        } else {
+          return target
+        }
+      },
+
+      /* 
+      4). 面试加强版本2(优化遍历性能)
+          数组: while | for | forEach() 优于 for-in | keys()&forEach() 
+          对象: for-in 与 keys()&forEach() 差不多
+      */
+      deepClone4 (target, map=new Map()) {
+        
+        if (target!==null && typeof target==='object') { // 非函数的对象
+         // const map = new Map()  // 用来缓存target与其对应的拷贝对象的容器   // 不能在这里
+          // 从缓存中取出对应的拷贝对象,如果有了, 直接返回它
+          let clone = map.get(target)
+          if (clone) return clone
+
+          // 如果没有, 创建一个新拷贝空容器, 缓存起来
+          if (Array.isArray(target)) {
+            clone = []
+            map.set(target, clone)
+            // 遍历target数组中所有元素, 依次添加到新容器
+            target.forEach((item, index) => {
+              // clone.push(aUtils.deepClone4(item, map))
+              clone[index] = aUtils.deepClone4(item, map)
+            })
+            
+          } else {
+            clone = {}
+            map.set(target, clone)
+            // 遍历target对象中所有数据, 依次添加到新容器
+            for (const key in target) {  // key是对象的属性名或数组的下标
+              if (target.hasOwnProperty(key)) { // 如果是容器自身的才需要处理
+                clone[key] = aUtils.deepClone4(target[key], map) // 对属性值进行克隆处理后保存
+              }
+            }
+          }
+          
+          return clone
+        } else {
+          return target
+        }
+      },
     }
   </script>
   <script>
@@ -50,8 +146,12 @@
     obj1.c.j = obj1.b
 
 
-    const cloneObj1 = aUtils.deepClone1(obj1)
+    // const cloneObj1 = aUtils.deepClone1(obj1)
+    // const cloneObj1 = aUtils.deepClone2(obj1)
+    // const cloneObj1 = aUtils.deepClone3(obj1)
+    const cloneObj1 = aUtils.deepClone4(obj1)
     console.log(cloneObj1===obj1, cloneObj1.c.h===obj1.c.h, cloneObj1) // false false
+    console.log(cloneObj1.d===obj1.d) // true
      
   </script>
 </body>
