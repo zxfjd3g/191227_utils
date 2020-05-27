@@ -11,17 +11,70 @@
         方法一: 利用ES6语法
         方法二: 利用ES5语法: for...in
   -->
-  <script src="../dist/atguigu-utils.js"></script>
+  <script src="./node_modules/atguigu-utils/dist/atguigu-utils.js"></script>
+  <script>
+      
+      /* 
+      只有对象或数组才进行拷贝, 其它类型直接返回
+      */
+      const aUtils = {
+        /* 方法一: 利用ES6语法 */
+        clone1 (target) {
+          if (target!==null && typeof target==='object') { // 非函数的对象
+            if (Array.isArray(target)) {
+              // return [...target]
+              // return target.slice()
+              // return target.filter(item => true)
+              // return target.map(item => item)
+            } else {
+              return {...target}
+            }
+          } else {
+            return target
+          }
+        },
+
+        /* 
+        方法二: 利用ES5语法: for...in   能遍历数组和对象
+        */
+        clone2 (target) {
+          if (target!==null && typeof target==='object') { // 非函数的对象
+            // 创建一个新的空容器
+            const clone = Array.isArray(target) ? [] : {}
+
+            // 遍历target中所有数据, 依次添加到新容器
+            for (const key in target) {  // key是对象的属性名或数组的下标
+              if (target.hasOwnProperty(key)) { // 如果是容器自身的才需要处理
+                clone[key] = target[key] // 向新容器中添加同名同值的数据
+              }
+            }
+            return clone
+          } else {
+            return target
+          }
+        }
+      }
+  </script>
   <script>
     const obj1 = { x: 'abc', y: {m: 1} }
-    // const obj2 = aUtils.clone1(obj1)
-    const obj2 = aUtils.clone2(obj1)
-    console.log(obj2, obj2===obj1, obj2.x===obj1.x, obj2.y===obj1.y)
-
+    // const clone = aUtils.clone1(obj1)
+    const clone = aUtils.clone2(obj1)
+    console.log(clone===obj1, obj1.y===clone.y, clone)  // false true
+    
     const arr1 = ['abc', {m: 1}]
-    // const arr2 = aUtils.clone1(arr1)
-    const arr2 = aUtils.clone2(arr1)
-    console.log(arr2, arr2===arr1, arr2[0]===arr1[0], arr2[1]===arr1[1])
+    // const clone2 = aUtils.clone1(arr1)
+    const clone2 = aUtils.clone2(arr1)
+    console.log(clone2===arr1, arr1[1]===clone2[1], arr1) // false true
+
+    function fn() {
+      
+    }
+    // const clone3 = aUtils.clone1(fn)
+    const clone3 = aUtils.clone2(fn)
+    console.log(clone3===fn) // true
+
+
+  
   </script>
 </body>
 </html>
