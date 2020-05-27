@@ -8,7 +8,58 @@
 </head>
 <body>
 
-  <script src="../dist/atguigu-utils.js"></script>
+  <script src="./node_modules/atguigu-utils/dist/atguigu-utils.js"></script>
+  <script>
+    const aUtils = {
+      /* 
+      语法: var newArray = concat(oldArr, value1[, value2[, ...[, valueN]]]) 
+        功能: 将n个数组或值与当前数组合并生成一个新数组
+      */
+      concat (oldArr, ...values) {
+        const array = [...oldArr]
+
+        values.forEach(value => { // value可能是数组, 也可能不是
+          // value可能是数组, 将数组中的每个元素添加到array中
+          if (Array.isArray(value)) {
+            array.push(...value)
+          } else { // value不是数组, 作为一个元素添加到array中
+            array.push(value)
+          }
+        })
+
+        return array
+      },
+
+      /* 
+      语法: var newArray = slice(oldArr, [begin[, end]])
+      功能: 返回一个由 begin 和 end 决定的原数组的浅拷贝, 原始数组不会被改变
+      */
+      slice (oldArr, start, end) {
+        const array = []
+
+        // 处理oldArr的特殊情况
+        if (!Array.isArray(oldArr)) {
+          throw new Error('第一个参数必须是数组')
+        }
+        if (oldArr.length===0) return array
+        // 处理start的特殊情况
+        if (start===undefined || start<0) {
+          start = 0
+        }
+        // 处理end的特殊情况
+        if (end===undefined || end>oldArr.length) {
+          end = oldArr.length
+        }
+
+        // 从oldArr中的[start, end)之间取出元素添加到array中
+        for (let index = start; index < end; index++) {
+          array.push(oldArr[index])
+        }
+
+        return array
+      }
+    }
+  </script>
   <script>
     /* 
       1. concat()
@@ -20,8 +71,8 @@
     */
     console.log(aUtils.concat([1, 2], [3, 4], 6))  // [1, 2, 3, 4, 6]
 
-    console.log(aUtils.slice([1, 3, 5, 7, 9]))  // [1, 3, 5, 7, 9]
     console.log(aUtils.slice([1, 3, 5, 7, 9], 1, 3)) // [3, 5]
+    console.log(aUtils.slice([1, 3, 5, 7, 9]))  // [1, 3, 5, 7, 9]
     console.log(aUtils.slice([1, 3, 5, 7, 9], 1, 10)) // [3, 5, 7, 9]
   </script>
 </body>
